@@ -14,11 +14,13 @@ public class MyLibrary {
         if number == 3 || number == 5 || number == 8 {
             return true
         }
-
+        
+        print(self.weatherService)
         // Fetch the current weather from the backend.
         // If the current temperature, in Farenheit, contains an 8, then that's lucky.
         do {
-            let temperature = try await weatherService.getTemperature()
+            let temperature = try await weatherService.getTemperature(url: WeatherServiceUrls.MockServer)
+            print("Checking if temperature contains 8")
             return temperature.contains("8")
         } catch {
             return nil

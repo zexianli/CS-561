@@ -2,6 +2,7 @@ import Alamofire
 import MyLibrary
 
 class MockWeatherService: WeatherService {
+    
     private var shouldSucceed: Bool
     private var shouldReturnTemperatureWithAnEight: Bool
 
@@ -11,7 +12,7 @@ class MockWeatherService: WeatherService {
     }
 
     /// Returns current temperature in Farenheight
-    func getTemperature() async throws -> Int {
+    func getTemperature(url: WeatherServiceUrls) async throws -> Int {
         switch (shouldSucceed, shouldReturnTemperatureWithAnEight) {
         case (true, true):
             return 38

@@ -1,15 +1,21 @@
 import Alamofire
+import Foundation
 
 public protocol WeatherService {
-    func getTemperature() async throws -> Int
+    func getTemperature(url: WeatherServiceUrls) async throws -> Int
 }
 
-class WeatherServiceImpl: WeatherService {
-    let url = "https://api.openweathermap.org/data/2.5/weather?q=corvallis&units=imperial&appid=<INSERT YOUR API KEY HERE>"
+public enum WeatherServiceUrls: String {
+    case OpenWeatherAPI = "https://api.openweathermap.org/data/2.5/weather?q=corvallis&units=imperial&appid=<YOUR API KEY HERE>"
+    case MockServer = "http://localhost:3000/data/2.5/weather"
+}
 
-    func getTemperature() async throws -> Int {
+class WeatherServiceImpl: WeatherService {    
+    
+    func getTemperature(url: WeatherServiceUrls) async throws -> Int {
+        
         return try await withCheckedThrowingContinuation { continuation in
-            AF.request(url, method: .get).validate(statusCode: 200..<300).responseDecodable(of: Weather.self) { response in
+            AF.request(url.rawValue, method: .get).validate(statusCode: 200..<300).responseDecodable(of: Weather.self) { response in
                 switch response.result {
                 case let .success(weather):
                     let temperature = weather.main.temp
@@ -24,7 +30,7 @@ class WeatherServiceImpl: WeatherService {
     }
 }
 
-private struct Weather: Decodable {
+struct Weather: Decodable {
     let main: Main
 
     struct Main: Decodable {
