@@ -50,32 +50,47 @@ final class WeatherServiceTests: XCTestCase {
     }
     """
     func testWeatherModelDecodeValidData() throws {
+        // Given
         let encodedData = Data(apiRes.utf8)
+        
+        // When
         let decodedData = try JSONDecoder().decode(Weather.self, from: encodedData)
+        
+        // Then
         XCTAssertNotNil(decodedData)
     }
     
     func testWeatherModelDecodeInvalidData() throws {
+        // Given
         let encodedData = Data("This is invalid".utf8)
+        
+        // When
         let decodedData = try? JSONDecoder().decode(Weather.self, from: encodedData)
         
+        // Then
         XCTAssertNil(decodedData)
     }
     
     
     func testWeatherServiceImplementationWithAPI() async throws {
+        // Given
         let WeatherService = WeatherServiceImpl()
 
+        // When
         let temperature = try await WeatherService.getTemperature(url : WeatherServiceUrls.OpenWeatherAPI)
         
+        // Then
         XCTAssertNotNil(temperature)
     }
     
     func testWeatherServiceWithMockServer() async throws {
+        // Given
         let WeatherService = WeatherServiceImpl()
 
+        // When
         let temperature = try await WeatherService.getTemperature(url : WeatherServiceUrls.MockServer)
         
+        // Then
         XCTAssertNotNil(temperature)
     }
     
