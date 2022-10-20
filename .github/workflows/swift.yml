@@ -8,30 +8,28 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+  
 
 jobs:
-  build-node:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x, 14.x, 15.x]
-
+  build-and-test:
+    runs-on: macos-latest
+    
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
+        with:
+          submodules: recursive
+      - name: Setup Node.js server
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm install
-      - run: npm run start
+          node-version: 15.x
+          working-directory: ./MockServer
+          run: |
+            npm install &&
+            npm start &
       
-  build-swift:
-    runs-on: macos-latest
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+      - name: Build and Test
+        working-directory: ./MyLibrary
+        run: |
+          swift build -v
+          swift test -v
