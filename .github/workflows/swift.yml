@@ -23,11 +23,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 15.x
+      - name: Run Node.js server
+        with:
           working-directory: ./MockServer
           run: |
-            npm install &&
-            npm start &
-            sleep 10
+            npm install;
+            npm start &;
+            sleep 10;
             curl -X GET http://localhost:3000/data/2.5/weather
       
       - name: Build and Test
