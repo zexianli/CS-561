@@ -2,6 +2,7 @@ import Alamofire
 import MyLibrary
 
 class MockWeatherService: WeatherService {
+    
     private var shouldSucceed: Bool
     private var shouldReturnTemperatureWithAnEight: Bool
 
@@ -10,19 +11,18 @@ class MockWeatherService: WeatherService {
         self.shouldReturnTemperatureWithAnEight = shouldReturnTemperatureWithAnEight
     }
 
-    func getTemperature(completion: @escaping (_ response: Result<Int /* Temperature */, Error>) -> Void) {
+    /// Returns current temperature in Farenheight
+    func getTemperature(url: WeatherServiceUrls) async throws -> Int {
         switch (shouldSucceed, shouldReturnTemperatureWithAnEight) {
         case (true, true):
-            let temperatureInFarenheit = 38
-            completion(.success(temperatureInFarenheit))
+            return 38
 
         case (true, false):
-            let temperatureInFarenheit = 39
-            completion(.success(temperatureInFarenheit))
+            return 39
 
         case (false, _):
             let error404 = AFError.explicitlyCancelled
-            completion(.failure(error404))
+            throw error404
         }
     }
 }

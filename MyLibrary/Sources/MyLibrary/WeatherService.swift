@@ -1,28 +1,36 @@
 import Alamofire
+import Foundation
 
 public protocol WeatherService {
-    func getTemperature(completion: @escaping (_ response: Result<Int /* Temperature */, Error>) -> Void)
+    func getTemperature(url: WeatherServiceUrls) async throws -> Int
 }
 
-class WeatherServiceImpl: WeatherService {
-    let url = "https://api.openweathermap.org/data/2.5/weather?q=corvallis&units=imperial&appid=<INSERT YOUR API KEY HERE>"
+public enum WeatherServiceUrls: String {
+    case OpenWeatherAPI = "https://api.openweathermap.org/data/2.5/weather?q=corvallis&units=imperial&appid=<YOUR API KEY HERE>"
+    case MockServer = "http://localhost:3000/data/2.5/weather"
+}
 
-    func getTemperature(completion: @escaping (_ response: Result<Int /* Temperature */, Error>) -> Void) {
-        AF.request(url, method: .get).validate(statusCode: 200..<300).responseDecodable(of: Weather.self) { response in
-            switch response.result {
-            case let .success(weather):
-                let temperature = weather.main.temp
-                let temperatureAsInteger = Int(temperature)
-                completion(.success(temperatureAsInteger))
+class WeatherServiceImpl: WeatherService {    
+    
+    func getTemperature(url: WeatherServiceUrls) async throws -> Int {
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            AF.request(url.rawValue, method: .get).validate(statusCode: 200..<300).responseDecodable(of: Weather.self) { response in
+                switch response.result {
+                case let .success(weather):
+                    let temperature = weather.main.temp
+                    let temperatureAsInteger = Int(temperature)
+                    continuation.resume(with: .success(temperatureAsInteger))
 
-            case let .failure(error):
-                completion(.failure(error))
+                case let .failure(error):
+                    continuation.resume(with: .failure(error))
+                }
             }
         }
     }
 }
 
-private struct Weather: Decodable {
+struct Weather: Decodable {
     let main: Main
 
     struct Main: Decodable {
