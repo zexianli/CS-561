@@ -72,15 +72,15 @@ final class WeatherServiceTests: XCTestCase {
     }
     
     
-    func testWeatherServiceImplementationWithAPI() async throws {
-        // Given
-        let WeatherService = WeatherServiceImpl()
+   //  func testWeatherServiceImplementationWithAPI() async throws {
+   //      // Given
+   //      let WeatherService = WeatherServiceImpl()
 
-        // When
-        let temperature = try await WeatherService.getTemperature(url : WeatherServiceUrls.OpenWeatherAPI)
+   //      // When
+   //      let temperature = try await WeatherService.getTemperature(url : WeatherServiceUrls.OpenWeatherAPI)
         
-        // Then
-        XCTAssertNotNil(temperature)
+   //      // Then
+   //      XCTAssertNotNil(temperature)
     }
     
     func testWeatherServiceWithMockServer() async throws {
